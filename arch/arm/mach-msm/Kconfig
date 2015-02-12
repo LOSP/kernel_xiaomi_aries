@@ -2671,3 +2671,10 @@ config FORCE_FAST_CHARGE
 	  are detected as USB to charge as AC.
 
 endif
+
+config MSM_SLEEPER
+	bool "Limit max frequency and shut off cores while screen is off"
+	default n
+	help
+	  Limit max frequency and shut off cores while screen is off
+
