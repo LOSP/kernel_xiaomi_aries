@@ -34,6 +34,11 @@
 
 #include <trace/events/power.h>
 
+#ifdef CONFIG_GPU_VOLTAGE_TABLE
+extern ssize_t get_gpu_vdd_levels_str(char *buf);
+extern void set_gpu_vdd_levels(int uv_tbl[]);
+#endif
+
 /**
  * The "cpufreq driver" - the arch- or hardware-dependent low
  * level driver of CPUFreq support, and its spinlock. This lock
@@ -691,6 +696,22 @@ static ssize_t show_bios_limit(struct cpufreq_policy *policy, char *buf)
 	return sprintf(buf, "%u\n", policy->cpuinfo.max_freq);
 }
 
+#ifdef CONFIG_GPU_VOLTAGE_TABLE
+ssize_t show_gpu_mv_table(struct cpufreq_policy *policy, char *buf)
+{
+        return get_gpu_vdd_levels_str(buf);
+}
+
+ssize_t store_gpu_mv_table(struct cpufreq_policy *policy, const char *buf, size_t count)
+{
+        unsigned int ret = -EINVAL;
+        unsigned int u[3];
+        ret = sscanf(buf, "%d %d %d", &u[0], &u[1], &u[2]);
+        set_gpu_vdd_levels(u);
+        return count;
+}
+#endif
+
 #ifdef CONFIG_CPU_VOLTAGE_TABLE
 
 extern ssize_t acpuclk_get_vdd_levels_str(char *buf);
@@ -769,6 +790,9 @@ cpufreq_freq_attr_rw(scaling_max_freq);
 cpufreq_freq_attr_rw(scaling_governor);
 cpufreq_freq_attr_rw(scaling_setspeed);
 cpufreq_freq_attr_rw(dvfs_test);
+#ifdef CONFIG_GPU_VOLTAGE_TABLE
+cpufreq_freq_attr_rw(gpu_mv_table);
+#endif
 #ifdef CONFIG_CPU_VOLTAGE_TABLE
 define_one_global_rw(vdd_levels);
 #endif
@@ -787,6 +811,9 @@ static struct attribute *default_attrs[] = {
 	&scaling_available_governors.attr,
 	&scaling_setspeed.attr,
         &dvfs_test.attr,
+#ifdef CONFIG_GPU_VOLTAGE_TABLE
+	&gpu_mv_table.attr,
+#endif
 	NULL
 };
 

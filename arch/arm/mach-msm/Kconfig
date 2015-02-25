@@ -1646,6 +1646,12 @@ config CPU_OVERCLOCK
         help
          Krait overclock support
 
+config GPU_VOLTAGE_TABLE
+		bool "Enable GPU Voltage Table via sysfs for adjustments"
+		default n
+		help
+		  Adreno User Voltage Control
+
 config CPU_VOLTAGE_TABLE
         bool "Enable CPU Voltage Table via sysfs for adjustements"
         default n
@@ -2677,4 +2683,3 @@ config MSM_SLEEPER
 	default n
 	help
 	  Limit max frequency and shut off cores while screen is off
-
